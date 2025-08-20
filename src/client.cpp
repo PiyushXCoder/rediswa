@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in server_addr = {};
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = ntohl(INADDR_LOOPBACK);
-  server_addr.sin_port = ntohs(8080);
+  server_addr.sin_port = ntohs(8000);
 
   if (connect(sockfd, (const sockaddr *)&server_addr, sizeof(server_addr))) {
     std::cerr << "Error connecting to server: " << strerror(errno) << std::endl;
@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
   const char *request = "big babool";
   u_int32_t req_len = strlen(request);
   char rbuf[4 + req_len];
-  memcpy(rbuf, &req_len, 4);
+  uint32_t req_len_net = htonl(req_len);
+  memcpy(rbuf, &req_len_net, 4);
   memcpy(&rbuf[4], request, req_len);
   std::cout << "Sending request: " << request << std::endl;
 
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
 
   u_int32_t res_len = 0;
   ssize_t err = read(sockfd, &res_len, 4);
+  res_len = ntohl(res_len);
   if (err < 0) {
     std::cerr << "Error reading response length: " << strerror(errno)
               << std::endl;

@@ -1,4 +1,5 @@
 #include "server.h"
+#include "protocol.h"
 #include <arpa/inet.h>
 #include <iostream>
 #include <unistd.h>
@@ -15,7 +16,9 @@ void HttpServer::start_event_loop() {
     connection = m_socket.accept_connection();
   };
   std::cout << "Got Connection" << std::endl;
-  char buf[5];
-  connection.value().read_full(buf, sizeof(buf));
-  std::cout << std::string(buf) << std::endl;
+
+  SimpleProtocol protocol(*connection);
+  std::cout << protocol.receive_message() << std::endl;
+  protocol.send_message("Hello, World!");
+  std::cout << "Sent response" << std::endl;
 }

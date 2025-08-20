@@ -19,8 +19,14 @@ Connection::~Connection() {
 void Connection::read_full(char *buf, size_t n) {
   while (n > 0) {
     ssize_t read_count = read(m_fd, buf, n);
-    if (read_count <= 0)
-      throw std::runtime_error("Reading failed");
+    if (read_count <= 0) {
+      if (errno == EAGAIN)
+        return;
+      else
+        throw std::runtime_error("Reading failed");
+    }
+
+    // throw std::runtime_error("Reading failed");
     if (read_count > (ssize_t)n)
       throw std::runtime_error("Buffer over flow while read");
 
@@ -32,8 +38,12 @@ void Connection::read_full(char *buf, size_t n) {
 void Connection::write_full(char *buf, size_t n) {
   while (n > 0) {
     ssize_t write_count = write(m_fd, buf, n);
-    if (write_count <= 0)
-      throw std::runtime_error("Reading failed");
+    if (write_count <= 0) {
+      if (errno == EAGAIN)
+        return;
+      else
+        throw std::runtime_error("Writing failed");
+    }
     if (write_count > (ssize_t)n)
       throw std::runtime_error("Buffer over flow while write");
     n -= (size_t)write_count;
