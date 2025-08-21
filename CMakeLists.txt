@@ -17,6 +17,10 @@ add_executable(rediswa
     src/fd_utils.h
     src/protocol.cpp
     src/protocol.h
+    src/request.h
+    src/request.cpp
+    src/response.h
+    src/response.cpp
 )
 
 add_executable(rediswa-client

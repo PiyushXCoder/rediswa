@@ -12,7 +12,7 @@ public:
   void start();
 
 private:
-  void start_event_loop();
+  void event_loop();
 
   TCPSocket m_socket;
 };

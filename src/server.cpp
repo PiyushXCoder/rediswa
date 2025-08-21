@@ -8,9 +8,9 @@ HttpServer::HttpServer(const char *ip, int port) : m_socket(ip, port) {}
 
 HttpServer::~HttpServer() {}
 
-void HttpServer::start() { start_event_loop(); }
+void HttpServer::start() { event_loop(); }
 
-void HttpServer::start_event_loop() {
+void HttpServer::event_loop() {
   std::optional<Connection> connection = std::nullopt;
   while (connection == std::nullopt) {
     connection = m_socket.accept_connection();
