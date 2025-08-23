@@ -11,14 +11,48 @@ HttpServer::~HttpServer() {}
 void HttpServer::start() { event_loop(); }
 
 void HttpServer::event_loop() {
-  std::optional<Connection> connection = std::nullopt;
-  while (connection == std::nullopt) {
-    connection = m_socket.accept_connection();
-  };
-  std::cout << "Got Connection" << std::endl;
+  while (true) {
+    // Accept new connections
+    std::optional<Connection> connection = m_socket.accept_connection();
+    if (connection != std::nullopt) {
+      Request request(*connection);
+      m_requests.push_back(request);
+    };
 
-  SimpleProtocol protocol(*connection);
-  std::cout << protocol.receive_message() << std::endl;
-  protocol.send_message("Hello, World!");
-  std::cout << "Sent response" << std::endl;
+    // Handle  requests
+    for (auto request = m_requests.begin(); request != m_requests.end();) {
+      if (!request->is_read) {
+        try {
+          request->read();
+        } catch (const std::exception &e) {
+          std::cerr << "Error reading request: " << e.what() << std::endl;
+          continue;
+        }
+      }
+      if (request->is_read) {
+        auto response = this->handle_request(*request);
+        m_responses.push_back(response);
+        request = m_requests.erase(request);
+      } else {
+        ++request;
+      }
+    }
+
+    // Handle responses
+    for (auto response = m_responses.begin(); response != m_responses.end();) {
+      if (!response->is_written) {
+        try {
+          response->write();
+        } catch (const std::exception &e) {
+          std::cerr << "Error writing response: " << e.what() << std::endl;
+          continue;
+        }
+      }
+      if (response->is_written) {
+        response = m_responses.erase(response);
+      } else {
+        ++response;
+      }
+    }
+  }
 }

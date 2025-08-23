@@ -17,6 +17,7 @@ public:
   ~SimpleProtocol() override;
   std::string get_version() override;
   std::string get_name() override;
+  ssize_t get_block_size();
   void send_message(std::string message) override;
   std::string receive_message() override;
 
