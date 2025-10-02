@@ -58,8 +58,16 @@ void HttpServer::event_loop() {
 }
 
 Response HttpServer::handle_request(const Request &request) {
-  std::cout << "Handling request: " << request.get_method() << " "
-            << request.get_route() << std::endl;
-  std::cout << "Body: " << std::endl << request.get_body() << std::endl;
-  return Response(request.get_connection(), 200, "Hello World");
+  auto route = m_routes.find({request.get_method(), request.get_route()});
+
+  if (route != m_routes.end()) {
+    return route->second(request);
+  } else {
+    return Response(request.get_connection(), 404, "Not Found");
+  }
+}
+
+void HttpServer::add_route(Method method, Route route,
+                           std::function<Response(Request)> handler) {
+  m_routes[{method, route}] = handler;
 }
