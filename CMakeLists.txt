@@ -5,23 +5,17 @@ project(rediswa VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_library(ServerLib)
+
+add_subdirectory(Libs/server)
+
 add_executable(rediswa
     src/main.cpp
-    src/server.cpp
-    src/server.h
-    src/tcp_socket.cpp
-    src/tcp_socket.h
-    src/connection.cpp
-    src/connection.h
-    src/fd_utils.cpp
-    src/fd_utils.h
-    src/request.h
-    src/request.cpp
-    src/response.h
-    src/response.cpp
 )
 
-add_executable(rediswa-client
-    src/client.cpp
+target_link_libraries(rediswa PRIVATE ServerLib)
+
+add_executable(hello
+    Tests/hello.cpp
 )
 
