@@ -15,8 +15,6 @@ add_executable(rediswa
     src/connection.h
     src/fd_utils.cpp
     src/fd_utils.h
-    src/protocol.cpp
-    src/protocol.h
     src/request.h
     src/request.cpp
     src/response.h

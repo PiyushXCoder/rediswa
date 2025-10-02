@@ -21,25 +21,59 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  const char *request = "big babool";
-  u_int32_t req_len = strlen(request);
-  char rbuf[4 + req_len];
-  uint32_t req_len_net = htonl(req_len);
-  memcpy(rbuf, &req_len_net, 4);
-  memcpy(&rbuf[4], request, req_len);
-  std::cout << "Sending request: " << request << std::endl;
+  //
+  // Send request
+  //
+  const char *path = "/hello";
+  u_int32_t path_length = strlen(path);
+  const char *body = "big babool";
+  u_int32_t body_length = strlen(body);
+  char rbuf[1 + 4 + path_length + 4 + body_length];
+
+  int field_start = 0;
+  rbuf[field_start] = 1; // Method: GET
+
+  field_start += 1;
+  u_int32_t len = htonl(path_length);
+  memcpy(&rbuf[field_start], &len, 4);
+
+  field_start += 4;
+  memcpy(&rbuf[field_start], path, path_length);
+
+  field_start += path_length;
+  len = htonl(body_length);
+  memcpy(&rbuf[field_start], &len, 4);
+
+  field_start += 4;
+  memcpy(&rbuf[field_start], body, body_length);
 
   write(sockfd, rbuf, sizeof(rbuf));
 
-  u_int32_t res_len = 0;
-  ssize_t err = read(sockfd, &res_len, 4);
-  res_len = ntohl(res_len);
+  //
+  // Read response
+  //
+  u_int16_t status = 0;
+  ssize_t err = read(sockfd, &status, 2);
   if (err < 0) {
     std::cerr << "Error reading response length: " << strerror(errno)
               << std::endl;
     close(sockfd);
     return 1;
   }
+  status = status;
+  std::cout << "Received status: " << status << std::endl;
+
+  u_int32_t res_len = 0;
+  err = read(sockfd, &res_len, 4);
+  if (err < 0) {
+    std::cerr << "Error reading response length: " << strerror(errno)
+              << std::endl;
+    close(sockfd);
+    return 1;
+  }
+  res_len = res_len;
+  std::cout << "Response length: " << res_len << std::endl;
+
   char buf[res_len + 1];
   read(sockfd, &buf, sizeof(buf) - 1);
   buf[res_len] = '\0';

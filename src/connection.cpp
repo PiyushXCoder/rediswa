@@ -16,37 +16,35 @@ Connection::~Connection() {
   }
 }
 
-void Connection::read_full(char *buf, size_t n) {
-  while (n > 0) {
-    ssize_t read_count = read(m_fd, buf, n);
-    if (read_count <= 0) {
-      if (errno == EAGAIN)
-        return;
-      else
-        throw std::runtime_error("Reading failed");
+std::vector<std::byte> Connection::read_non_blocking() {
+  std::vector<std::byte> buffer(1024);
+  ssize_t bytes_read = read(m_fd, buffer.data(), buffer.size());
+  if (bytes_read < 0) {
+    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+      // No data available right now
+      return {};
+    } else {
+      throw std::runtime_error("Reading failed: " +
+                               std::string(strerror(errno)));
     }
-
-    // throw std::runtime_error("Reading failed");
-    if (read_count > (ssize_t)n)
-      throw std::runtime_error("Buffer over flow while read");
-
-    n -= (size_t)read_count;
-    buf += read_count;
+  } else if (bytes_read == 0) {
+    // Connection closed
+    return {};
   }
+  buffer.resize(bytes_read);
+  return buffer;
 }
 
-void Connection::write_full(char *buf, size_t n) {
-  while (n > 0) {
-    ssize_t write_count = write(m_fd, buf, n);
-    if (write_count <= 0) {
-      if (errno == EAGAIN)
-        return;
-      else
-        throw std::runtime_error("Writing failed");
+int Connection::write_non_blocking(const std::vector<std::byte> &data) {
+  ssize_t bytes_written = write(m_fd, data.data(), data.size());
+  if (bytes_written < 0) {
+    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+      // Cannot write right now
+      return 0;
+    } else {
+      throw std::runtime_error("Writing failed: " +
+                               std::string(strerror(errno)));
     }
-    if (write_count > (ssize_t)n)
-      throw std::runtime_error("Buffer over flow while write");
-    n -= (size_t)write_count;
-    buf += write_count;
   }
+  return bytes_written;
 }

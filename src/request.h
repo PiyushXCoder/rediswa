@@ -1,17 +1,9 @@
 #pragma once
 #include "connection.h"
-#include <array>
-#include <optional>
 #include <string>
 #include <sys/types.h>
 
-typedef struct {
-  std::string method;
-  std::string path;
-  std::string version;
-  std::string host;
-  int content_length;
-} RequestHeader;
+enum Method { NONE = 0, GET = 1, POST = 2, PUT = 3, DELETE = 4 };
 
 class Request {
 public:
@@ -19,16 +11,20 @@ public:
   Connection &get_connection() const;
   Request &operator=(const Request &other);
 
-  bool is_header_read() const;
-  bool is_body_read() const;
+  bool is_ready() const;
   void read();
-  const RequestHeader &get_header() const;
-  const std::string &get_body() const;
+  Method get_method() const;
+  std::string get_path() const;
+  std::string get_body() const;
 
 private:
   Connection &m_connection;
-  std::array<std::byte, sizeof(RequestHeader)> m_header_raw = {};
-  std::optional<RequestHeader> m_header = std::nullopt;
-  std::optional<std::string> m_body = std::nullopt;
+  u_int8_t m_method = NONE;
+  u_int32_t m_path_length = 0;
+  std::string m_path = "";
+  u_int32_t m_body_length = 0;
+  std::string m_body = "";
   int m_read_length = 0;
+
+  u_int32_t m_get_total_length() const;
 };
