@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   char rbuf[1 + 4 + route_length + 4 + body_length];
 
   int field_start = 0;
-  rbuf[field_start] = 1; // Method: GET
+  rbuf[field_start] = method; // Method: GET
 
   field_start += 1;
   u_int32_t len = htonl(route_length);
