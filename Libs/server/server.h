@@ -9,10 +9,10 @@
 #include <sys/types.h>
 #include <vector>
 
-class HttpServer {
+class MyProtocolServer {
 public:
-  HttpServer(const char *ip, int port);
-  ~HttpServer();
+  MyProtocolServer(const char *ip, int port);
+  ~MyProtocolServer();
   void add_route(Method method, Route route,
                  std::function<Response(Request)> handler);
 

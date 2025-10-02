@@ -8,11 +8,11 @@ Response hello_handler(Request req) {
 }
 
 int main(int argc, char *argv[]) {
-  HttpServer http_server("0.0.0.0", 8000);
-  http_server.add_route(Method::GET, "/hello", hello_handler);
+  MyProtocolServer my_protocol_server("0.0.0.0", 8000);
+  my_protocol_server.add_route(Method::GET, "/hello", hello_handler);
 
   try {
-    http_server.start();
+    my_protocol_server.start();
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
   }

@@ -4,13 +4,14 @@
 #include <thread>
 #include <unistd.h>
 
-HttpServer::HttpServer(const char *ip, int port) : m_socket(ip, port) {}
+MyProtocolServer::MyProtocolServer(const char *ip, int port)
+    : m_socket(ip, port) {}
 
-HttpServer::~HttpServer() {}
+MyProtocolServer::~MyProtocolServer() {}
 
-void HttpServer::start() { event_loop(); }
+void MyProtocolServer::start() { event_loop(); }
 
-void HttpServer::event_loop() {
+void MyProtocolServer::event_loop() {
   while (true) {
     // Accept new connections
     std::optional<Connection> connection = m_socket.accept_connection();
@@ -57,7 +58,7 @@ void HttpServer::event_loop() {
   }
 }
 
-Response HttpServer::handle_request(const Request &request) {
+Response MyProtocolServer::handle_request(const Request &request) {
   auto route = m_routes.find({request.get_method(), request.get_route()});
 
   if (route != m_routes.end()) {
@@ -67,7 +68,7 @@ Response HttpServer::handle_request(const Request &request) {
   }
 }
 
-void HttpServer::add_route(Method method, Route route,
-                           std::function<Response(Request)> handler) {
+void MyProtocolServer::add_route(Method method, Route route,
+                                 std::function<Response(Request)> handler) {
   m_routes[{method, route}] = handler;
 }
