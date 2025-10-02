@@ -59,7 +59,7 @@ void HttpServer::event_loop() {
 
 Response HttpServer::handle_request(const Request &request) {
   std::cout << "Handling request: " << request.get_method() << " "
-            << request.get_path() << std::endl;
+            << request.get_route() << std::endl;
   std::cout << "Body: " << std::endl << request.get_body() << std::endl;
   return Response(request.get_connection(), 200, "Hello World");
 }

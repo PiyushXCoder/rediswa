@@ -24,23 +24,23 @@ int main(int argc, char *argv[]) {
   //
   // Send request
   //
-  const char *path = "/hello";
-  u_int32_t path_length = strlen(path);
+  const char *route = "/hello";
+  u_int32_t route_length = strlen(route);
   const char *body = "big babool";
   u_int32_t body_length = strlen(body);
-  char rbuf[1 + 4 + path_length + 4 + body_length];
+  char rbuf[1 + 4 + route_length + 4 + body_length];
 
   int field_start = 0;
   rbuf[field_start] = 1; // Method: GET
 
   field_start += 1;
-  u_int32_t len = htonl(path_length);
+  u_int32_t len = htonl(route_length);
   memcpy(&rbuf[field_start], &len, 4);
 
   field_start += 4;
-  memcpy(&rbuf[field_start], path, path_length);
+  memcpy(&rbuf[field_start], route, route_length);
 
-  field_start += path_length;
+  field_start += route_length;
   len = htonl(body_length);
   memcpy(&rbuf[field_start], &len, 4);
 
