@@ -19,3 +19,7 @@ add_executable(hello
     Tests/hello.cpp
 )
 
+add_executable(client
+    Cli/client.cpp
+)
+
