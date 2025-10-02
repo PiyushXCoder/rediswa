@@ -1,11 +1,13 @@
 #pragma once
 #include "connection.h"
+#include "request.h"
 #include <string>
 #include <sys/types.h>
 
 class Response {
 public:
   Response(Connection &conn, u_int16_t status, const std::string &body);
+  Response(Request &req, u_int16_t status, const std::string &body);
   Connection &get_connection() const;
   Response &operator=(const Response &other);
 

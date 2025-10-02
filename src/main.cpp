@@ -4,7 +4,7 @@
 #include <iostream>
 
 Response hello_handler(Request req) {
-  return Response(req.get_connection(), 200, "What kind of hello do you want?");
+  return Response(req, 200, "What kind of hello do you want?");
 }
 
 int main(int argc, char *argv[]) {

@@ -6,6 +6,9 @@ Response::Response(Connection &conn, u_int16_t status, const std::string &body)
       m_body_length(body.size()) {}
 Connection &Response::get_connection() const { return m_connection; }
 
+Response::Response(Request &req, u_int16_t status, const std::string &body)
+    : Response(req.get_connection(), status, body) {}
+
 Response &Response::operator=(const Response &other) {
   if (this != &other) {
     this->m_status = other.m_status;
