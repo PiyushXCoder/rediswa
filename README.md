@@ -72,3 +72,7 @@ Here are examples
 ```bash
 ./build/client 127.0.0.1 8000 DELETE "/kvstore" "Key:hello"
 ```
+
+## Todo
+
+[ ] Polling in event loop
