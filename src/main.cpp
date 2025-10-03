@@ -1,15 +1,10 @@
-#include "request.h"
-#include "response.h"
+#include "routes.h"
 #include "server.h"
 #include <iostream>
 
-Response hello_handler(Request req) {
-  return Response(req, 200, "What kind of hello do you want?");
-}
-
 int main(int argc, char *argv[]) {
   MyProtocolServer my_protocol_server("0.0.0.0", 8000);
-  my_protocol_server.add_route(Method::GET, "/hello", hello_handler);
+  configure_routes(my_protocol_server);
 
   try {
     my_protocol_server.start();

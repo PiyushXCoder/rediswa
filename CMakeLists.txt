@@ -11,6 +11,8 @@ add_subdirectory(Libs/server)
 
 add_executable(rediswa
     src/main.cpp
+    src/in_memory_kvstore.cpp
+    src/routes.cpp
 )
 
 target_link_libraries(rediswa PRIVATE ServerLib)
