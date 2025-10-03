@@ -9,9 +9,9 @@ MyProtocolServer::MyProtocolServer(const char *ip, int port)
 
 MyProtocolServer::~MyProtocolServer() {}
 
-void MyProtocolServer::start() { event_loop(); }
+void MyProtocolServer::start() { m_event_loop(); }
 
-void MyProtocolServer::event_loop() {
+void MyProtocolServer::m_event_loop() {
   while (true) {
     // Accept new connections
     std::optional<Connection> connection = m_socket.accept_connection();
@@ -30,7 +30,7 @@ void MyProtocolServer::event_loop() {
           continue;
         }
       } else {
-        auto response = this->handle_request(*request);
+        auto response = this->m_handle_request(*request);
         m_responses.push_back(response);
         request = m_requests.erase(request);
         continue;
@@ -58,7 +58,7 @@ void MyProtocolServer::event_loop() {
   }
 }
 
-Response MyProtocolServer::handle_request(const Request &request) {
+Response MyProtocolServer::m_handle_request(const Request &request) {
   auto route = m_routes.find({request.get_method(), request.get_route()});
 
   if (route != m_routes.end()) {

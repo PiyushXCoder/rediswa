@@ -19,8 +19,8 @@ public:
   void start();
 
 private:
-  void event_loop();
-  Response handle_request(const Request &request);
+  void m_event_loop();
+  Response m_handle_request(const Request &request);
 
   TCPSocket m_socket;
   std::vector<Request> m_requests;
