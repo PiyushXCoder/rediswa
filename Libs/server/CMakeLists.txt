@@ -1,15 +1,9 @@
 target_sources(ServerLib PRIVATE 
     server.cpp
-    server.h
     tcp_socket.cpp
-    tcp_socket.h
     connection.cpp
-    connection.h
     fd_utils.cpp
-    fd_utils.h
-    request.h
     request.cpp
-    response.h
     response.cpp
 )
 
